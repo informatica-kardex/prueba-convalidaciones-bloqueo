@@ -1,0 +1,11 @@
+VERSIÓN 28.0 - REVISIÓN DE MATERIAS Y REAPERTURA DEL FORMULARIO
+
+- Los tres informes muestran su tabla de materias antes de confirmar la descarga.
+- La advertencia naranja, la casilla y los botones quedan en el pie de la revisión.
+- Aviso para revisar, conservar el archivo y subir ese mismo PDF al formulario.
+- Se requiere marcar la casilla y confirmar; cancelar permite volver y corregir.
+- Instrucciones para adjuntar INFORME 1, INFORME 2 e INFORME FINAL en sus casillas.
+- El final descargado y el botón principal permiten reabrir Google Forms.
+- Reabrir no genera PDF, no quita bloqueos y funciona después de recargar la página.
+- Se conservan el generador y formato del PDF de v27, los cálculos y los registros.
+- 32 pruebas locales pasaron. No hubo revisión visual en un navegador real.

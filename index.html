@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123a66">
+  <title>Solicitud de Convalidaciones</title>
+  <meta name="description" content="Consulta de convalidaciones de materias entre los planes 1998, 2023 y 2023 ajustado.">
+  <link rel="icon" type="image/png" href="assets/logo-kardex-transparente.png?v=19.1">
+  <link rel="stylesheet" href="styles.css?v=19.1">
+  <link rel="stylesheet" href="print.css?v=19.3">
+  <link rel="stylesheet" href="gestion.css?v=8">
+  <link rel="stylesheet" href="envios.css?v=29.0">
+  <link rel="stylesheet" href="print-additions.css?v=27.0">
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema"></button>
+  <header class="topbar">
+    <img class="header-logo header-logo-kardex" src="assets/logo-kardex-transparente.png" alt="Kardex de la Carrera de Informática">
+    <div class="brand-copy">
+      <p class="eyebrow">KARDEX - CARRERA DE INFORMÁTICA</p>
+      <h1>SOLICITUD DE CONVALIDACIONES</h1>
+    </div>
+    <div class="save-state" id="saveState"><i></i> Guardado en este dispositivo</div>
+    <img class="header-logo header-logo-informatica" src="assets/logo-informatica-transparente.png" alt="UMSA Carrera de Informática">
+  </header>
+
+  <main>
+    <section class="setup-card" aria-labelledby="datos-title">
+      <div>
+        <p class="step">01 · Datos del estudiante</p>
+        <h2 id="datos-title">Prepara tu consulta</h2>
+      </div>
+      <div class="setup-grid">
+        <label>Apellidos y nombres
+          <input id="studentName" autocomplete="name" maxlength="150" placeholder="EJ. QUISPE MAMANI ANDREA">
+        </label>
+        <label>Cédula de identidad (CI)
+          <input id="studentCi" autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="Ej. 12345678">
+        </label>
+        <label>Registro Universitario (RU)
+          <input id="studentRu" autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="Ej. 1836661">
+        </label>
+        <label>Mención del plan 1998 (obligatoria)
+          <select id="oldMentionSelect" aria-label="Mención del plan 1998" required></select>
+        </label>
+        <label>Mención de destino (obligatoria)
+          <select id="careerSelect" aria-label="Mención de destino" required></select>
+        </label>
+        <label class="institutional-email">Correo institucional (obligatorio)
+          <input id="studentEmail" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required placeholder="usuario@fcpn.edu.bo" aria-describedby="emailHelp">
+          <small id="emailHelp">Solo se acepta @fcpn.edu.bo. Al terminar, inicia sesión en Google con esa misma cuenta para entregar los tres informes.</small>
+        </label>
+      </div>
+      <button class="history-upload-toggle" id="toggleHistoryButton" type="button" aria-expanded="false" aria-controls="historyReader">SUBIR HISTORIAL EN PDF (SI TIENE)</button>
+      <div class="history-reader" id="historyReader" hidden>
+        <div>
+          <strong>Lectura opcional del historial académico</strong>
+          <p id="readerHelp">Puedes cargar el archivo antes o después de elegir las menciones. Si todavía faltan, quedará preparado y se leerá automáticamente cuando completes ambas.</p>
+        </div>
+        <label for="historyFile" class="reader-dropzone" id="historyDropZone" tabindex="0" aria-describedby="readerHelp">
+          <span class="reader-drop-icon" aria-hidden="true">⇧</span>
+          <span class="reader-drop-title">Arrastra el historial aquí</span>
+          <span class="reader-drop-subtitle">PDF, PNG o JPG</span>
+          <span class="reader-drop-or">o</span>
+          <span class="reader-upload">Seleccionar archivo</span>
+          <span class="reader-file-chip" id="readerFileChip" hidden><span class="reader-file-name" id="readerFileName"></span><button id="removeHistoryFile" class="reader-remove-file" type="button" aria-label="Quitar archivo" title="Quitar archivo">×</button></span>
+          <input id="historyFile" type="file" accept="application/pdf,image/png,image/jpeg" aria-label="Seleccionar historial académico en PDF o imagen">
+        </label>
+        <div class="reader-actions" id="readerActions" hidden><button id="startHistoryReading" class="ghost reader-start" type="button">Iniciar lectura</button></div>
+        <div class="reader-feedback" id="readerFeedback" hidden>
+          <progress id="readerProgress" max="100" value="0"></progress>
+          <span id="readerStatus"></span>
+        </div>
+        <div class="reader-result" id="readerResult" hidden></div>
+      </div>
+      <p id="lockedDataNote" class="local-note" hidden>Los datos del estudiante quedaron fijados al iniciar la primera descarga.</p>
+      <p class="local-note">Cada informe se descarga una sola vez en este navegador. Revisa los datos antes de confirmar y conserva los tres archivos. Al descargar el informe final se abrirá el formulario de entrega con tus datos preparados.</p>
+    </section>
+
+    <section class="workspace" id="workspaceSection" aria-labelledby="materias-title" hidden>
+      <div class="workspace-head">
+        <div>
+          <p class="step">02 · Materias aprobadas</p>
+          <h2 id="materias-title">Selecciona solo en el plan 1998</h2>
+          <p class="help">Las otras columnas se completan automáticamente según las equivalencias.</p>
+        </div>
+        <div class="progress-block" aria-live="polite">
+          <div><strong id="selectedCount">0</strong><span>seleccionadas</span></div>
+          <div><strong id="validatedCount">0</strong><span>convalidadas</span></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="search"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Buscar por sigla o asignatura"></label>
+        <button class="ghost" id="clearButton" type="button">Limpiar selección</button>
+      </div>
+
+      <div class="legend" aria-label="Leyenda">
+        <span><i class="dot selected"></i> Aprobada</span>
+        <span><i class="dot complete"></i> Convalidación completa</span>
+        <span><i class="dot pending"></i> Falta elegir una electiva</span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="matrix" role="table" aria-label="Matriz de convalidación">
+          <div class="matrix-header plan-old" role="columnheader"><span>Plan de estudios</span><strong>1998</strong><small>Selecciona aquí</small></div>
+          <div class="matrix-header plan-mid" role="columnheader"><span>Plan de estudios</span><strong>2023</strong><small>Resultado intermedio</small></div>
+          <div class="matrix-header plan-new" role="columnheader"><span>Plan de estudios</span><strong>2023 ajustado</strong><small>Resultado final</small></div>
+          <div id="matrixRows" class="matrix-rows"></div>
+        </div>
+      </div>
+      <div id="emptyState" class="empty" hidden>No se encontraron materias con esa búsqueda.</div>
+    </section>
+
+    <section class="summary" id="summarySection" aria-labelledby="resumen-title" hidden>
+      <div>
+        <p class="step">03 · Documento</p>
+        <h2 id="resumen-title">Genera tu tabla de convalidación</h2>
+        <p>Incluye el nombre, el CI, la mención antigua, la mención nueva y las tres columnas.</p>
+      </div>
+      <button class="primary" id="pdfButton" type="button">Generar y descargar PDF</button>
+    </section>
+    <section class="download-progress" aria-labelledby="downloadsTitle">
+      <p class="step">04 · Tus descargas</p><h2 id="downloadsTitle">Conserva tus tres informes</h2>
+      <div id="downloadStates" class="download-states"></div>
+    </section>
+    <section id="finalDelivery" class="final-delivery" aria-labelledby="finalDeliveryTitle" hidden>
+      <p class="step">05 · Entrega</p><h2 id="finalDeliveryTitle">Entrega los tres PDF en Google</h2>
+      <p id="finalDeliveryDescription"></p>
+      <ol class="report-upload-list">
+        <li><strong>Primer informe:</strong> adjunta el PDF que comienza con <strong>INFORME 1</strong>.</li>
+        <li><strong>Segundo informe:</strong> adjunta el PDF que comienza con <strong>INFORME 2</strong>.</li>
+        <li><strong>Informe Final:</strong> adjunta el PDF que comienza con <strong>INFORME FINAL</strong>.</li>
+      </ol>
+      <a id="openFinalForm" class="primary" href="#" target="_blank" rel="noopener noreferrer">Abrir formulario de entrega</a>
+      <p class="delivery-note">Al terminar de adjuntar los tres archivos, pulsa «Enviar» en Google. Si cierras la pestaña, puedes volver a abrir el formulario desde aquí o desde el botón principal. Si ya respondiste, Google te lo indicará según la restricción de una respuesta configurada en el formulario.</p>
+    </section>
+    <p id="submissionStatus" class="submission-status" role="status" aria-live="polite"></p>
+  </main>
+
+  <dialog id="downloadConfirm" class="download-confirm" aria-labelledby="confirmDownloadTitle">
+    <header class="confirm-heading">
+      <h2 id="confirmDownloadTitle">Revisa tus datos</h2>
+      <p>Comprueba tus datos, las menciones y cada materia antes de descargar.</p>
+    </header>
+    <div id="confirmScroll" class="confirm-scroll" tabindex="0" role="region" aria-label="Datos y materias del informe">
+      <dl id="confirmStudentFields" class="confirm-student-fields"></dl>
+      <section class="confirm-courses" aria-labelledby="confirmCoursesTitle">
+        <h3 id="confirmCoursesTitle">Materias que se incluirán en el PDF</h3>
+        <p>Revisa las siglas, los nombres y sus equivalencias. Esta es la tabla de tu informe.</p>
+        <div id="confirmCourseTable" class="confirm-course-table-wrap" tabindex="0" role="region" aria-label="Tabla de materias; desplaza horizontalmente si es necesario"></div>
+      </section>
+    </div>
+    <footer class="confirm-footer">
+      <details id="confirmDownloadWarning" class="download-warning">
+        <summary><strong>Revisa tus datos y materias antes de descargar.</strong> <span class="warning-more warning-toggle">Ver más</span><span class="warning-less warning-toggle">Ver menos</span></summary>
+        <p>Comprueba que tus datos personales, las menciones y las materias sean correctos. La descarga de cada informe se realiza una sola vez; al confirmar, se deshabilitará esta opción. Guarda el PDF y adjunta ese mismo archivo al formulario de entrega. Si necesitas corregir algún dato, selecciona «Volver y corregir» antes de continuar.</p>
+      </details>
+      <details id="confirmFinalNote" class="download-warning" hidden>
+        <summary><strong>Adjunta cada informe en la casilla correspondiente.</strong> <span class="warning-more warning-toggle">Ver más</span><span class="warning-less warning-toggle">Ver menos</span></summary>
+        <p>Después de descargar el informe final, se abrirá el formulario de entrega con tus datos precargados. Adjunta los PDF que guardaste en las casillas indicadas:</p>
+        <ol class="report-upload-list">
+          <li><strong>Primer informe → INFORME 1.</strong></li>
+          <li><strong>Segundo informe → INFORME 2.</strong></li>
+          <li><strong>Informe Final → INFORME FINAL.</strong></li>
+        </ol>
+        <p>Comprueba que cada archivo corresponda a su casilla y pulsa <strong>«Enviar»</strong> para completar la entrega.</p>
+      </details>
+      <label class="confirm-reviewed"><input id="confirmReviewed" type="checkbox" aria-describedby="confirmDownloadWarning">He revisado mis datos y materias. Entiendo que debo conservar este PDF para subirlo al formulario.</label>
+      <div class="confirm-actions"><button id="cancelDownloadButton" class="ghost" type="button">Volver y corregir</button><button id="confirmDownloadButton" class="primary" type="button" disabled>Sí, descargar una vez</button></div>
+    </footer>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <section id="printView" class="print-view" aria-hidden="true">
+    <div class="print-header">
+      <img class="print-logo print-logo-kardex" src="assets/logo-kardex-transparente.png" alt="Logo de Kardex">
+      <div>
+        <p class="print-unit">KARDEX - CARRERA DE INFORMÁTICA</p>
+        <h1>TABLA DE CONVALIDACIÓN DE PLANES DE ESTUDIO</h1>
+        <p>Plan 1998 - Plan 2023 - Plan 2023 ajustado</p>
+      </div>
+      <img class="print-logo print-logo-informatica" src="assets/logo-informatica-transparente.png" alt="Logo de la Carrera de Informática">
+    </div>
+    <dl class="print-meta"><div><dt>Estudiante:</dt><dd id="printName"></dd></div><div><dt>CI:</dt><dd id="printCi"></dd></div><div><dt>RU:</dt><dd id="printRu"></dd></div><div><dt>Mención:</dt><dd id="printCareer"></dd></div><div><dt>Fecha:</dt><dd id="printDate"></dd></div></dl>
+    <dl class="print-meta print-email-meta"><div><dt>Correo:</dt><dd id="printEmail"></dd></div></dl>
+    <table>
+      <colgroup><col class="code-col"><col class="name-col"><col class="code-col"><col class="name-col"><col class="code-col"><col class="name-col"></colgroup>
+      <thead>
+        <tr class="plan-title-row">
+          <th colspan="2">PÉNSUM 1998<br><span>MENCIÓN <b id="printPlan1998"></b></span><br><span>NIVEL LICENCIATURA</span></th>
+          <th colspan="2">PÉNSUM 2023<br><span>MENCIÓN <b id="printPlan2023"></b></span><br><span>NIVEL LICENCIATURA</span></th>
+          <th colspan="2">PÉNSUM 2023 AJUSTADO<br><span>MENCIÓN <b id="printPlanAdjusted"></b></span><br><span>NIVEL LICENCIATURA</span></th>
+        </tr>
+        <tr class="column-title-row"><th>SIGLA</th><th>ASIGNATURA</th><th>SIGLA</th><th>ASIGNATURA</th><th>SIGLA</th><th>ASIGNATURA</th></tr>
+      </thead>
+      <tbody id="printRows"></tbody>
+    </table>
+    <p class="print-count">Número de materias convalidadas: <strong id="printCount">0</strong></p>
+    <p class="print-note">Documento generado por el Sistema de Convalidaciones. Será revisado y validado por la Unidad de Kardex de la Carrera de Informática.</p>
+    <p id="printEmission" class="print-emission"></p>
+  </section>
+
+  <style>
+    .entry-notice{width:min(580px,calc(100% - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:26px;border:1px solid #c8d7cf;border-top:5px solid #236b50;border-radius:16px;background:#fff;color:#182b40;box-shadow:0 24px 80px #102c4055;overflow:auto}
+    .entry-notice::backdrop{background:rgba(12,30,43,.65)}
+    .entry-notice h2{margin:0 0 16px;color:#236b50}
+    .entry-notice p{font-size:.95rem;line-height:1.55;margin:12px 0}
+    .entry-notice form{display:flex;justify-content:flex-end;margin-top:20px}
+    @media print{.entry-notice{display:none!important}}
+  </style>
+  <dialog id="entryNotice" class="entry-notice" aria-labelledby="entryNoticeTitle" aria-describedby="entryNoticeText">
+    <h2 id="entryNoticeTitle">Comunicado importante</h2>
+    <div id="entryNoticeText">
+      <p>Para realizar tu solicitud, utiliza únicamente tu <strong>correo institucional @fcpn.edu.bo</strong>. Te recomendamos realizar el proceso desde una <strong>laptop o PC de escritorio</strong>, en un navegador donde ya hayas iniciado sesión en Google con esa misma cuenta.</p>
+      <p><strong>Revisa tus datos, menciones y materias antes de generar los informes.</strong> Cada informe se puede descargar una sola vez; después, su descarga quedará deshabilitada. Las materias de cada plan también quedarán bloqueadas al generar su informe. Guarda los PDF para adjuntarlos al formulario.</p>
+      <p>Al generar el <strong>informe final</strong>, el formulario de envío se abrirá automáticamente. Mantén iniciada tu sesión institucional para acceder; sin la cuenta @fcpn.edu.bo, <strong>NO</strong> podrás completar el envío. Si el navegador bloquea la apertura, pulsa «Abrir formulario de entrega».</p>
+      <p>El formulario de Google admite <strong>un solo envío</strong>. Comprueba tus respuestas y los archivos adjuntos antes de pulsar «Enviar».</p>
+      <p>Este proceso es una <strong>solicitud de convalidación</strong>: <strong>NO</strong> constituye una convalidación oficial ni garantiza su aprobación. La documentación será revisada por la Unidad de Kardex de la Carrera de Informática.</p>
+    </div>
+    <form method="dialog"><button class="primary" autofocus>Aceptar</button></form>
+  </dialog>
+  <script>
+    (() => {
+      const notice = document.getElementById("entryNotice");
+      notice.addEventListener("cancel", event => event.preventDefault());
+      notice.showModal();
+      window.addEventListener("pageshow", event => {
+        if (event.persisted && !notice.open) notice.showModal();
+      });
+    })();
+  </script>
+
+  <script src="download-ledger.js?v=26.0"></script>
+  <script src="data.js?v=30.0"></script>
+  <script src="app.js?v=31.0"></script>
+  <script src="gestion-data.js?v=30.0"></script>
+  <script src="gestion.js?v=31.0"></script>
+  <script src="envios-config.js?v=24.0"></script>
+  <script src="form-links.js?v=24.0"></script>
+  <script src="assets/vendor/pdf-lib.min.js"></script>
+  <script src="report-assets.js?v=27.0"></script>
+  <script src="report-pdf.js?v=27.0"></script>
+  <script src="envios.js?v=29.0"></script>
+  <script src="assets/vendor/tesseract.min.js"></script>
+  <script type="module" src="history-reader.mjs?v=19.6"></script>
+</body>
+</html>
