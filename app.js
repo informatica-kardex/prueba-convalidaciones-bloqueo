@@ -1,9 +1,9 @@
 // El informe 2 también depende de las selecciones del plan 1998.
 function selectionLocked(plan) {
   try {
-    const reports = window.DownloadLedger?.create(localStorage).read().reports || {};
-    return Boolean(reports[plan] || reports.final || (plan === "old" && reports.modern));
-  } catch (_) { return true; }
+    const reports = JSON.parse(localStorage.getItem("convalidaciones-descargas-v24") || "null")?.reports || {};
+    return [plan, "final", ...(plan === "old" ? ["modern"] : [])].some(type => reports[type]?.status === "INICIADA");
+  } catch (_) { return false; }
 }
 
 const DATA = window.CONVALIDATION_DATA;
