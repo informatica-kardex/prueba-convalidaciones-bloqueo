@@ -220,7 +220,15 @@
     state.search = ''; $('searchInput').value = '';
     render();
   }
-  nextButton.addEventListener('click', () => switchMode(mode === '1998' ? '2023' : '1998'));
+  const modernNotice = $('modernNotice');
+  modernNotice.addEventListener('cancel', event => event.preventDefault());
+  modernNotice.addEventListener('close', () => {
+    if (mode === '2023') goToChoice('2023', 'input[data-gestion-id]:not(:disabled)');
+  });
+  nextButton.addEventListener('click', () => {
+    switchMode(mode === '1998' ? '2023' : '1998');
+    if (mode === '2023' && !selectionLocked('modern')) modernNotice.showModal();
+  });
   const originalRender = render;
   render = function() {
     const reserved = reconcileOldSelections();
@@ -235,7 +243,7 @@
     oldHeader.hidden = modern;
     middleHeader.innerHTML = modern ? '<span>Plan de estudios</span><strong>2023</strong><small>Selecciona aquí</small>' : middleHeaderHtml;
     $('materias-title').textContent = modern ? 'Selecciona las materias aprobadas del plan 2023' : 'Selecciona solo en el plan 1998';
-    help.textContent = modern ? 'Las materias convalidadas desde 1998 están marcadas y bloqueadas. Marca las demás materias que aprobaste en 2023.' : originalHelp;
+    help.textContent = modern ? 'Las materias convalidadas desde 1998 están marcadas y bloqueadas. Marca todas las materias que aprobaste después del cambio de mención y selecciona su gestión de aprobación.' : originalHelp;
     if (lockedPlan) help.textContent = 'Las materias de este plan están bloqueadas porque su informe ya fue generado.';
     summary.textContent = modern ? 'Elige el informe del plan 2023 o el informe final con los tres planes.' : originalSummary;
     updatePdfMenu();
@@ -378,6 +386,12 @@
     }
     // Validación compartida: tampoco permite saltarse la gestión desde el PDF antiguo.
     const inheritedForValidation = inheritedCodes();
+    const hasNewSelection = catalog().some(course => manual().has(course.id) && !isInheritedCourse(course, inheritedForValidation));
+    if (!hasNewSelection) {
+      goToChoice('2023', 'input[data-gestion-id]:not(:disabled)');
+      toast('Debes seleccionar las materias que aprobaste después de la convalidación y del cambio de mención antes de generar el informe 2. Las convalidadas desde 1998 no cuentan como una nueva selección.');
+      return false;
+    }
     const missing = catalog().find(course => manual().has(course.id) && !isInheritedCourse(course, inheritedForValidation) && !semesterOptions(course.id).includes(semesterValues()[course.id]))?.id;
     if (missing) {
       goToChoice('2023', `[data-semester-code="${missing}"]`);
