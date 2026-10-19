@@ -65,7 +65,7 @@
     computacion:['COM-323','COM-317','INF-336']
   };
   const semesters = Array.from({length:8},(_,i)=>[ `INVIERNO/${2023+i}`, `I/${2023+i}`, `II/${2023+i}`, `VERANO/${2023+i}` ]).flat();
-  const semesterOptions = code => semesters.filter(value => !(specialCodes.includes(code) && /^(?:INVIERNO|VERANO)\/202[34]$/.test(value)));
+  const semesterOptions = code => semesters.filter(value => !(specialCodes.includes(code) && /^(?:INVIERNO|VERANO)\/202[34]$/.test(value) && value !== 'VERANO/2024'));
   const semesterLabel = value => value.replace('INVIERNO/', 'Invierno I/').replace('VERANO/', 'Verano II/');
   const inPdfPeriod = value => /\/202[34]$/.test(value);
   const eligible = value => ['I/2023','II/2023','I/2024','II/2024'].includes(value);
