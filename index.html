@@ -12,6 +12,16 @@
   <link rel="stylesheet" href="gestion.css?v=8">
   <link rel="stylesheet" href="envios.css?v=29.0">
   <link rel="stylesheet" href="print-additions.css?v=27.0">
+  <style>
+    .history-upload-controls{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+    .history-reader-enable{display:inline-flex;align-items:center;gap:8px;color:var(--ink);cursor:pointer}
+    .history-reader-enable input{width:18px;height:18px;margin:0;flex:0 0 auto;accent-color:var(--blue)}
+    #toggleHistoryButton:disabled{opacity:.5;cursor:not-allowed}
+    #workspaceSection .matrix:not(.gestion-matrix){grid-template-columns:1fr 1fr;min-width:650px}
+    #workspaceSection .matrix:not(.gestion-matrix) .plan-new,
+    #workspaceSection .matrix:not(.gestion-matrix) .course-row>.cell:nth-child(3){display:none}
+    @media(max-width:760px){.history-upload-controls{grid-column:1}}
+  </style>
 </head>
 <body>
   <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema"></button>
@@ -52,7 +62,14 @@
           <small id="emailHelp">Solo se acepta @fcpn.edu.bo. Al terminar, inicia sesión en Google con esa misma cuenta para entregar los tres informes.</small>
         </label>
       </div>
-      <button class="history-upload-toggle" id="toggleHistoryButton" type="button" aria-expanded="false" aria-controls="historyReader">SUBIR HISTORIAL EN PDF (SI TIENE)</button>
+      <div class="history-upload-controls">
+        <label class="history-reader-enable" for="enableHistoryReader">
+          <input id="enableHistoryReader" type="checkbox" aria-controls="toggleHistoryButton historyReader" aria-describedby="historyReaderHelp">
+          Habilitar lector de PDF del historial
+        </label>
+        <button class="history-upload-toggle" id="toggleHistoryButton" type="button" aria-expanded="false" aria-controls="historyReader" disabled>SUBIR HISTORIAL EN PDF (SI TIENE)</button>
+      </div>
+      <p id="historyReaderHelp" class="local-note">Habilita el lector solo si tienes tu historial completo del plan antiguo (1998). Su uso es voluntario y no es obligatorio para continuar. Si no tienes el historial completo o prefieres no usar el lector, deja esta opción desmarcada y selecciona manualmente tus materias aprobadas en la tabla de abajo.</p>
       <div class="history-reader" id="historyReader" hidden>
         <div>
           <strong>Lectura opcional del historial académico</strong>
@@ -75,7 +92,6 @@
         <div class="reader-result" id="readerResult" hidden></div>
       </div>
       <p id="lockedDataNote" class="local-note" hidden>Los datos del estudiante quedaron fijados al iniciar la primera descarga.</p>
-      <p class="local-note">Cada informe se descarga una sola vez en este navegador. Revisa los datos antes de confirmar y conserva los tres archivos. Al descargar el informe final se abrirá el formulario de entrega con tus datos preparados.</p>
     </section>
 
     <section class="workspace" id="workspaceSection" aria-labelledby="materias-title" hidden>
@@ -83,7 +99,7 @@
         <div>
           <p class="step">02 · Materias aprobadas</p>
           <h2 id="materias-title">Selecciona solo en el plan 1998</h2>
-          <p class="help">Las otras columnas se completan automáticamente según las equivalencias.</p>
+          <p class="help">La columna 2023 se completa automáticamente según las equivalencias.</p>
         </div>
         <div class="progress-block" aria-live="polite">
           <div><strong id="selectedCount">0</strong><span>seleccionadas</span></div>
@@ -246,7 +262,7 @@
   </dialog>
 
   <script src="data.js?v=30.0"></script>
-  <script src="app.js?v=32.1"></script>
+  <script src="app.js?v=32.2"></script>
   <script src="gestion-data.js?v=30.0"></script>
   <script src="gestion.js?v=32.2"></script>
   <script src="envios-config.js?v=24.0"></script>

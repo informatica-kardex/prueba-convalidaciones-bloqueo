@@ -422,7 +422,19 @@ loadState();
 populateCareers();
 render();
 
+$("enableHistoryReader").addEventListener("change", (event) => {
+  const enabled = event.target.checked;
+  $("toggleHistoryButton").disabled = !enabled;
+  if (!enabled) {
+    $("historyReader").hidden = true;
+    $("toggleHistoryButton").setAttribute("aria-expanded", "false");
+    $("toggleHistoryButton").textContent = "SUBIR HISTORIAL EN PDF (SI TIENE)";
+    $("removeHistoryFile").click();
+  }
+});
+
 $("toggleHistoryButton").addEventListener("click", () => {
+  if (!$("enableHistoryReader").checked) return;
   const reader = $("historyReader");
   const willOpen = reader.hidden;
   reader.hidden = !willOpen;
