@@ -243,7 +243,7 @@
     oldHeader.hidden = modern;
     middleHeader.innerHTML = modern ? '<span>Plan de estudios</span><strong>2023</strong><small>Selecciona aquí</small>' : middleHeaderHtml;
     $('materias-title').textContent = modern ? 'Selecciona las materias aprobadas del plan 2023' : 'Selecciona solo en el plan 1998';
-    help.textContent = modern ? 'Las materias convalidadas desde 1998 están marcadas y bloqueadas. Marca todas las materias que aprobaste después del cambio de mención y selecciona su gestión de aprobación.' : originalHelp;
+    help.textContent = modern ? 'Las materias convalidadas desde 1998 están marcadas y bloqueadas. Marca todas las materias que aprobaste después del cambio de mención y selecciona su gestión de aprobación. Los contadores solo incluyen las materias admitidas en el PDF (hasta la gestión 2024).' : originalHelp;
     if (lockedPlan) help.textContent = 'Las materias de este plan están bloqueadas porque su informe ya fue generado.';
     summary.textContent = modern ? 'Elige el informe del plan 2023 o el informe final con los tres planes.' : originalSummary;
     updatePdfMenu();
@@ -281,8 +281,9 @@
     }
     if (lockedPlan) $('matrixRows').querySelectorAll('input, select').forEach(control => control.disabled = true);
     $('emptyState').hidden = filtered.length > 0;
-    $('selectedCount').textContent = approved().length;
-    $('validatedCount').textContent = new Set(approved().map(course => course.finalCode)).size;
+    const countedCourses = approved(true);
+    $('selectedCount').textContent = countedCourses.length;
+    $('validatedCount').textContent = new Set(countedCourses.map(course => course.finalCode)).size;
   };
   $('matrixRows').addEventListener('change',event => {
     if (selectionLocked(mode === '2023' ? 'modern' : 'old')) {

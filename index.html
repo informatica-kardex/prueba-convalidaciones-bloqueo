@@ -32,8 +32,8 @@
         <h2 id="datos-title">Prepara tu consulta</h2>
       </div>
       <div class="setup-grid">
-        <label>Apellidos y nombres
-          <input id="studentName" autocomplete="name" maxlength="150" placeholder="EJ. QUISPE MAMANI ANDREA">
+        <label>APELLIDOS Y NOMBRES
+          <input id="studentName" autocomplete="name" autocapitalize="characters" spellcheck="false" maxlength="150" placeholder="EJ. QUISPE MAMANI ANDREA">
         </label>
         <label>Cédula de identidad (CI)
           <input id="studentCi" autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="Ej. 12345678">
@@ -214,11 +214,13 @@
   <dialog id="entryNotice" class="entry-notice" aria-labelledby="entryNoticeTitle" aria-describedby="entryNoticeText">
     <h2 id="entryNoticeTitle">Comunicado importante</h2>
     <div id="entryNoticeText">
+      <p><strong>Los estudiantes de TALLER I y TALLER II no deben llenar este formulario.</strong></p>
       <p>Para realizar tu solicitud, utiliza únicamente tu <strong>correo institucional @fcpn.edu.bo</strong>. Te recomendamos realizar el proceso desde una <strong>laptop o PC de escritorio</strong>, en un navegador donde ya hayas iniciado sesión en Google con esa misma cuenta.</p>
       <p><strong>Revisa tus datos, menciones y materias antes de generar los informes.</strong> Cada informe se puede descargar una sola vez; después, su descarga quedará deshabilitada. Las materias de cada plan también quedarán bloqueadas al generar su informe. Guarda los PDF para adjuntarlos al formulario.</p>
       <p>Al generar el <strong>informe final</strong>, el formulario de envío se abrirá automáticamente. Mantén iniciada tu sesión institucional para acceder; sin la cuenta @fcpn.edu.bo, <strong>NO</strong> podrás completar el envío. Si el navegador bloquea la apertura, pulsa «Abrir formulario de entrega».</p>
       <p>El formulario de Google admite <strong>un solo envío</strong>. Comprueba tus respuestas y los archivos adjuntos antes de pulsar «Enviar».</p>
       <p>Este proceso es una <strong>solicitud de convalidación</strong>: <strong>NO</strong> constituye una convalidación oficial ni garantiza su aprobación. La documentación será revisada por la Unidad de Kardex de la Carrera de Informática.</p>
+      <p>Si tienes cualquier duda o problema, acude a <strong>Kardex de la Carrera de Informática</strong>.</p>
     </div>
     <form method="dialog"><button class="primary" autofocus>Aceptar</button></form>
   </dialog>
@@ -244,9 +246,9 @@
   </dialog>
 
   <script src="data.js?v=30.0"></script>
-  <script src="app.js?v=32.0"></script>
+  <script src="app.js?v=32.1"></script>
   <script src="gestion-data.js?v=30.0"></script>
-  <script src="gestion.js?v=32.1"></script>
+  <script src="gestion.js?v=32.2"></script>
   <script src="envios-config.js?v=24.0"></script>
   <script src="form-links.js?v=24.0"></script>
   <script src="assets/vendor/pdf-lib.min.js"></script>

@@ -29,7 +29,7 @@ function loadState() {
     if (saved.workshopChoices && typeof saved.workshopChoices === "object" && !Array.isArray(saved.workshopChoices)) state.workshopChoices = saved.workshopChoices;
     state.email = typeof saved.email === "string" ? saved.email : "";
     state.career = DATA[saved.career] ? saved.career : "";
-    state.name = saved.name || "";
+    state.name = String(saved.name || "").toLocaleUpperCase("es");
     state.ci = saved.ci || "";
     state.ru = saved.ru || "";
     state.oldMention = OLD_MENTIONS[saved.oldMention] ? saved.oldMention : "";
@@ -431,7 +431,19 @@ $("toggleHistoryButton").addEventListener("click", () => {
   if (willOpen) $("historyDropZone").focus({preventScroll:true});
 });
 
-$("studentName").addEventListener("input", (event) => { state.name = event.target.value; saveState(); });
+$("studentName").addEventListener("input", (event) => {
+  const input = event.target;
+  const uppercaseName = input.value.toLocaleUpperCase("es");
+  if (input.value !== uppercaseName) {
+    const start = input.value.slice(0, input.selectionStart).toLocaleUpperCase("es").length;
+    const end = input.value.slice(0, input.selectionEnd).toLocaleUpperCase("es").length;
+    const direction = input.selectionDirection;
+    input.value = uppercaseName;
+    input.setSelectionRange(start, end, direction);
+  }
+  state.name = input.value;
+  saveState();
+});
 $("studentCi").addEventListener("input", (event) => { event.target.value = event.target.value.replace(/\D/g, ""); state.ci = event.target.value; saveState(); });
 $("studentRu").addEventListener("input", (event) => { event.target.value = event.target.value.replace(/\D/g, ""); state.ru = event.target.value; saveState(); });
 $("oldMentionSelect").addEventListener("change", (event) => {
@@ -513,7 +525,7 @@ function registerWebMcpTools() {
       if (!input || typeof input.name !== "string" || !input.name.trim() || !/^\d+$/.test(input.ci) || !/^\d+$/.test(input.ru) || !validOldMentions.includes(input.oldMention) || !validCareers.includes(input.career)) throw new Error("Nombre, CI, RU o menciones no válidos");
       const registered = window.ReportSubmission?.lockedProfile();
       if (registered && ['name','ci','ru','oldMention','career'].some(key => registered[key] !== (key === 'name' ? input.name.trim() : input[key]))) throw new Error("Los datos quedaron fijados al iniciar la primera descarga.");
-      state.name = input.name.trim(); state.ci = input.ci; state.ru = input.ru; state.oldMention = input.oldMention; state.career = input.career;
+      state.name = registered ? registered.name : input.name.trim().toLocaleUpperCase("es"); state.ci = input.ci; state.ru = input.ru; state.oldMention = input.oldMention; state.career = input.career;
       $("studentName").value = state.name; $("studentCi").value = state.ci; $("studentRu").value = state.ru; $("oldMentionSelect").value = state.oldMention; $("careerSelect").disabled = false; $("careerSelect").value = state.career;
       saveState(); render();
       return {name:state.name,ci:state.ci,ru:state.ru,oldMention:state.oldMention,oldMentionName:OLD_MENTIONS[state.oldMention],career:state.career,careerName:DATA[state.career].name};
