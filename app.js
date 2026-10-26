@@ -130,13 +130,12 @@ const hasInheritedWorkshop = () => (DATA[state.career]?.rows || []).some(row => 
 function workshopDecision() {
   const options = workshopOptions();
   if (options.length === 1) return options[0].middleCode;
-  const saved = state.workshopChoices[state.career];
-  return saved === "direct" || options.some(course => course.middleCode === saved) ? saved : "";
+  return "direct";
 }
 function workshopMiddle() {
   const choice = workshopDecision();
   return workshopOptions().find(course => course.middleCode === choice) || {
-    middleCode:"", middleName:choice === "direct" ? "CONVALIDACIÓN DIRECTA DESDE 1998; SIN TALLER ESPECÍFICO EN 2023" : "SELECCIONA EL ANTECEDENTE DEL TALLER 2023"
+    middleCode:"", middleName:"TÉCNICO SUPERIOR"
   };
 }
 const workshopPanel = document.createElement("div");
@@ -144,7 +143,7 @@ workshopPanel.id = "workshopChoicePanel";
 workshopPanel.className = "help";
 workshopPanel.style = "width:100%;min-width:0;margin:0;font-size:.78rem";
 function renderWorkshopChoice() {
-  workshopPanel.hidden = !state.oldMention || !hasInheritedWorkshop() || workshopOptions().length < 2;
+  workshopPanel.hidden = true;
   if (workshopPanel.hidden) return;
   const slot = document.getElementById("workshopChoiceSlot");
   if (slot) slot.appendChild(workshopPanel);
@@ -180,9 +179,6 @@ function resultCell(row, plan) {
     const missing = required.filter((item) => !selectedSet().has(item.id));
     const missingCount = missing.length === 1 ? "Te falta 1 materia:" : `Te faltan ${missing.length} materias:`;
     return `<div class="cell cell-result pending"><div><span class="status-label">${missingCount}</span><span class="name">${missing.map((m) => `${m.oldCode} ${courseName(m.oldName)}`).join(" · ")}</span></div></div>`;
-  }
-  if (plan === "middle" && row.finalCode === "INF-266" && workshopOptions().length > 1) {
-    return `<div class="cell cell-result ready"><div id="workshopChoiceSlot" style="width:100%;min-width:0"></div></div>`;
   }
   const middle = row.finalCode === "INF-266" ? workshopMiddle() : row;
   const code = plan === "middle" ? middle.middleCode : row.finalCode;
