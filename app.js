@@ -135,7 +135,7 @@ function workshopDecision() {
 function workshopMiddle() {
   const choice = workshopDecision();
   return workshopOptions().find(course => course.middleCode === choice) || {
-    middleCode:"", middleName:"TÉCNICO SUPERIOR"
+    middleCode:"", middleName:"TALLER DE TÉCNICO SUPERIOR"
   };
 }
 const workshopPanel = document.createElement("div");
